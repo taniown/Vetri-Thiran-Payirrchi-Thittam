@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}
+History — PocketSmart AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-head">
+
+    <div>
+
+        <span class="eyebrow">
+            HISTORY
+        </span>
+
+        <h1>
+            Your saved recommendation plans
+        </h1>
+
+    </div>
+
+</section>
+
+
+<div
+    id="historyList"
+    class="stack"
+>
+    Loading…
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function load() {
+
+    const history =
+        await api(
+            "/history?limit=100"
+        );
+
+
+    document
+        .querySelector("#historyList")
+        .innerHTML =
+
+        history.length
+
+            ? history
+                .map(
+                    item => `
+                        <article
+                            class="history-card"
+                        >
+
+                            <div>
+
+                                <b>
+                                    ${item.planner.toUpperCase()}
+                                </b>
+
+                                <span>
+                                    ₹${item.budget.toLocaleString()}
+                                </span>
+
+                                <small>
+                                    ${new Date(
+                                        item.created_at
+                                    ).toLocaleString()}
+                                </small>
+
+                            </div>
+
+
+                            <details>
+
+                                <summary>
+                                    View request
+                                    and recommendations
+                                </summary>
+
+                                <pre>${JSON.stringify(
+                                    item.response,
+                                    null,
+                                    2
+                                )}</pre>
+
+                            </details>
+
+                        </article>
+                    `
+                )
+                .join("")
+
+            : "No saved plans.";
+}
+
+
+load();
+
+</script>
+
+{% endblock %}

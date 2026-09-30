@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard — PocketSmart AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-head">
+
+    <div>
+
+        <span class="eyebrow">
+            DASHBOARD
+        </span>
+
+        <h1 id="welcome">
+            Your PocketSmart workspace
+        </h1>
+
+        <p>
+            Choose a planner or revisit
+            recent recommendations.
+        </p>
+
+    </div>
+
+
+    <button
+        class="button secondary"
+        onclick="logout()"
+    >
+        Logout
+    </button>
+
+</section>
+
+
+<section class="grid three">
+
+    <article>
+
+        <h2>
+            🏠 Home
+        </h2>
+
+        <p>
+            Interior budget planning.
+        </p>
+
+        <a
+            class="button"
+            href="/planner/home"
+        >
+            Plan home
+        </a>
+
+    </article>
+
+
+    <article>
+
+        <h2>
+            🎉 Party
+        </h2>
+
+        <p>
+            Event budget planning.
+        </p>
+
+        <a
+            class="button"
+            href="/planner/party"
+        >
+            Plan party
+        </a>
+
+    </article>
+
+
+    <article>
+
+        <h2>
+            💎 Jewelry
+        </h2>
+
+        <p>
+            Occasion and outfit matching.
+        </p>
+
+        <a
+            class="button"
+            href="/planner/jewelry"
+        >
+            Plan jewelry
+        </a>
+
+    </article>
+
+</section>
+
+
+<section>
+
+    <h2>
+        Recent plans
+    </h2>
+
+    <div
+        id="historyList"
+        class="stack"
+    >
+        Loading…
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+async function load() {
+
+    const session =
+        await api(
+            "/session-info"
+        );
+
+
+    if (session.user) {
+
+        document
+            .querySelector("#welcome")
+            .textContent =
+            `Hi, ${session.user.name}`;
+    }
+
+
+    const history =
+        await api(
+            "/history?limit=5"
+        );
+
+
+    document
+        .querySelector("#historyList")
+        .innerHTML =
+        history.length
+
+            ? history
+                .map(
+                    item => `
+                        <div class="history-row">
+
+                            <b>
+                                ${item.planner}
+                            </b>
+
+                            <span>
+                                ₹${item.budget.toLocaleString()}
+                            </span>
+
+                            <span>
+                                ${new Date(
+                                    item.created_at
+                                ).toLocaleString()}
+                            </span>
+
+                        </div>
+                    `
+                )
+                .join("")
+
+            : "No plans yet.";
+}
+
+
+load();
+
+</script>
+
+{% endblock %}

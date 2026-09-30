@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home Planner
+{% endblock %}
+
+
+{% block content %}
+
+<div class="planner">
+
+    <div>
+
+        <span class="eyebrow">
+            HOME INTERIOR
+        </span>
+
+        <h1>
+            Build a room within budget
+        </h1>
+
+
+        <form id="plannerForm">
+
+            <label>
+                Budget (₹)
+
+                <input
+                    name="budget"
+                    type="number"
+                    min="1"
+                    required
+                    value="50000"
+                >
+            </label>
+
+
+            <label>
+                Room
+
+                <select name="room">
+
+                    <option>
+                        Living Room
+                    </option>
+
+                    <option>
+                        Bedroom
+                    </option>
+
+                    <option>
+                        Kitchen
+                    </option>
+
+                    <option>
+                        Study
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+                Style
+
+                <select name="style">
+
+                    <option>
+                        Modern
+                    </option>
+
+                    <option>
+                        Minimal
+                    </option>
+
+                    <option>
+                        Traditional
+                    </option>
+
+                    <option>
+                        Scandinavian
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+
+                Items, one per line:
+                category,quantity
+
+                <textarea
+                    name="items"
+                    rows="5"
+                >lighting,2
+furniture,1
+decor,2</textarea>
+
+            </label>
+
+
+            <button class="button">
+                Generate plan
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div
+        id="results"
+        class="results"
+    >
+
+        <p>
+            Recommendations will appear here.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+document
+    .querySelector("#plannerForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            const form =
+                new FormData(event.target);
+
+
+            const items =
+                form
+                    .get("items")
+                    .split("\n")
+                    .map(
+                        line => {
+
+                            const [
+                                category,
+                                quantity = "1"
+                            ] =
+                                line.split(",");
+
+                            return {
+                                category:
+                                    category.trim(),
+
+                                quantity:
+                                    Number(
+                                        quantity
+                                    ) || 1
+                            };
+                        }
+                    )
+                    .filter(
+                        item =>
+                            item.category
+                    );
+
+
+            const body = {
+
+                budget:
+                    Number(
+                        form.get("budget")
+                    ),
+
+                room:
+                    form.get("room"),
+
+                style:
+                    form.get("style"),
+
+                items
+
+            };
+
+
+            const response =
+                await api(
+                    "/generate-home",
+                    {
+                        method: "POST",
+
+                        body:
+                            JSON.stringify(body),
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            render(response);
+
+        }
+    );
+
+</script>
+
+{% endblock %}

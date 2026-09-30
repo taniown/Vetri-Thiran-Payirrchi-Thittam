@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}
+Party Planner
+{% endblock %}
+
+
+{% block content %}
+
+<div class="planner">
+
+    <div>
+
+        <span class="eyebrow">
+            PARTY PLANNER
+        </span>
+
+        <h1>
+            Organize an event around
+            your budget
+        </h1>
+
+
+        <form id="plannerForm">
+
+            <label>
+                Budget (₹)
+
+                <input
+                    name="budget"
+                    type="number"
+                    min="1"
+                    required
+                    value="30000"
+                >
+            </label>
+
+
+            <label>
+                Event type
+
+                <select name="event_type">
+
+                    <option>
+                        Birthday
+                    </option>
+
+                    <option>
+                        Wedding
+                    </option>
+
+                    <option>
+                        Corporate
+                    </option>
+
+                    <option>
+                        Family gathering
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+                Guests
+
+                <input
+                    name="guests"
+                    type="number"
+                    min="1"
+                    required
+                    value="30"
+                >
+            </label>
+
+
+            <label>
+                Venue preference
+
+                <input
+                    name="venue"
+                    value="Home"
+                >
+            </label>
+
+
+            <label>
+                City
+
+                <input
+                    name="city"
+                    value="Chennai"
+                >
+            </label>
+
+
+            <label>
+                Food preference
+
+                <select
+                    name="food_preference"
+                >
+
+                    <option>
+                        Mixed
+                    </option>
+
+                    <option>
+                        Vegetarian
+                    </option>
+
+                    <option>
+                        North Indian
+                    </option>
+
+                    <option>
+                        South Indian
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <button class="button">
+                Generate plan
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div
+        id="results"
+        class="results"
+    >
+
+        <p>
+            Recommendations will appear here.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+document
+    .querySelector("#plannerForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            const form =
+                new FormData(event.target);
+
+            const body =
+                Object.fromEntries(form);
+
+
+            body.budget =
+                Number(body.budget);
+
+            body.guests =
+                Number(body.guests);
+
+
+            const response =
+                await api(
+                    "/generate-party",
+                    {
+                        method: "POST",
+
+                        body:
+                            JSON.stringify(body),
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            render(response);
+
+        }
+    );
+
+</script>
+
+{% endblock %}

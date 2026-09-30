@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}
+Jewelry Planner
+{% endblock %}
+
+
+{% block content %}
+
+<div class="planner">
+
+    <div>
+
+        <span class="eyebrow">
+            JEWELRY PLANNER
+        </span>
+
+        <h1>
+            Find occasion-ready
+            jewelry ideas
+        </h1>
+
+
+        <form
+            id="plannerForm"
+            enctype="multipart/form-data"
+        >
+
+            <label>
+                Budget (₹)
+
+                <input
+                    name="budget"
+                    type="number"
+                    min="1"
+                    required
+                    value="10000"
+                >
+            </label>
+
+
+            <label>
+                Occasion
+
+                <select name="occasion">
+
+                    <option>
+                        Wedding
+                    </option>
+
+                    <option>
+                        Party
+                    </option>
+
+                    <option>
+                        Festival
+                    </option>
+
+                    <option>
+                        Formal event
+                    </option>
+
+                    <option>
+                        Everyday
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+                Style
+
+                <select name="style">
+
+                    <option>
+                        Minimal
+                    </option>
+
+                    <option>
+                        Classic
+                    </option>
+
+                    <option>
+                        Statement
+                    </option>
+
+                    <option>
+                        Traditional
+                    </option>
+
+                    <option>
+                        Contemporary
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+
+                Outfit notes
+
+                <textarea
+                    name="outfit_notes"
+                    maxlength="500"
+                    placeholder="Colour, neckline, material, or any useful context"
+                ></textarea>
+
+            </label>
+
+
+            <label>
+
+                Optional outfit image
+
+                <input
+                    name="outfit_image"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                >
+
+            </label>
+
+
+            <button class="button">
+                Generate plan
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div
+        id="results"
+        class="results"
+    >
+
+        <p>
+            Recommendations will appear here.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+document
+    .querySelector("#plannerForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            const form =
+                new FormData(event.target);
+
+
+            const response =
+                await api(
+                    "/generate-jewelry",
+                    {
+                        method: "POST",
+                        body: form
+                    }
+                );
+
+
+            render(response);
+
+        }
+    );
+
+</script>
+
+{% endblock %}
